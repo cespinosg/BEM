@@ -56,18 +56,17 @@ class BEMSolver():
         f_tip = 2/np.pi*np.arccos(np.exp(-np.pi*(1-mu)/d))
         mu_hub = self.blade.df['mu'][0]
         f_root = 2/np.pi*np.arccos(np.exp(-np.pi*(mu-mu_hub)/d))
-        f = f_tip*f_root
+        f = f_tip*f_root+1e-4
         return f
 
     def get_flow_angle(self, a, ap, mu):
         '''
         Calculates the flow angle for the given induction factors.
         '''
-        f = self.get_prandtl(a, mu)
-        phi = np.arctan2(1-a/f, self.tsr*mu*(1+ap/f))
+        phi = np.arctan2(1-a, self.tsr*mu*(1+ap))
         return phi
 
-    def solve(self, mu, tol=1e-6):
+    def solve(self, mu, tol=1e-9):
         '''
         Solves the BEM equations at the given section.
         '''
@@ -83,15 +82,18 @@ class BEMSolver():
             w2_u2 = (1-a0)**2+(self.tsr*mu*(1+ap0))**2
             cx = cl*np.cos(phi)+cd*np.sin(phi)
             cy = cl*np.sin(phi)-cd*np.cos(phi)
-            a = w2_u2*sigma_r*cx/(4*(1-a0))
-            ap = w2_u2*sigma_r*cy/(4*(1-a0)*self.tsr*mu)
+            f = self.get_prandtl(a0, mu)
+            a = w2_u2*sigma_r*cx/(4*(1-a0)*f)
+            ap = w2_u2*sigma_r*cy/(4*(1-a0)*self.tsr*mu*f)
             error = max([abs(a-a0), abs(ap-ap0)])
-            a0, ap0 = a, ap
-            # print(i)
-            # i += 1
+            # Relaxing the induction factors is necessary for convergence near
+            # the root
+            a0, ap0 = 0.75*a0+0.25*a, 0.75*ap0+0.25*ap
+            print(i)
+            i += 1
         return a, ap
 
 if __name__ == '__main__':
     blade = Blade()
-    solver = BEMSolver(blade, 10)
-    a, ap = solver.solve(0.25)
+    solver = BEMSolver(blade, 6)
+    a, ap = solver.solve(0.505)
