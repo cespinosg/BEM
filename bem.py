@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from graph import *
+# from graph import *
 
 
 class Blade():
@@ -45,9 +45,10 @@ class BEMSolver():
     Solves the BEM equations for the given geometry and conditions.
     '''
 
-    def __init__(self, blade, tsr):
+    def __init__(self, blade, tsr, yaw):
         self.blade = blade
         self.tsr = tsr
+        self.yaw = np.radians(yaw)
 
     def get_prandtl(self, a, mu):
         '''
@@ -60,12 +61,23 @@ class BEMSolver():
         f = f_tip*f_root+1e-4
         return f
 
-    def get_flow_angle(self, a, ap, mu):
+    def get_flow_angle(self, u_a, u_t):
         '''
-        Calculates the flow angle for the given induction factors.
+        Calculates the flow angle for the given the axial and tangential
+        velocities.
         '''
-        phi = np.arctan2(1-a, self.tsr*mu*(1+ap))
+        phi = np.arctan2(u_a, u_t)
         return phi
+
+    def get_velocities(self, a, ap, mu, psi):
+        '''
+        Returns the axial and tangential velocities.
+        '''
+        chi = (0.6*a+1)*self.yaw
+        k = 2*np.tan(0.5*chi)
+        u_a = np.cos(self.yaw)-a*(1+k*mu*np.sin(psi))
+        u_t = self.tsr*mu*(1+ap)-np.sin(self.yaw)*np.cos(psi)
+        return u_a, u_t
 
     def get_a(self, CT):
         '''
@@ -79,26 +91,30 @@ class BEMSolver():
             a = 1 + (CT-CT1)/(4*np.sqrt(CT1)-4)
         return a
 
-    def solve(self, mu, dmu, tol=1e-9):
+    def solve(self, mu, dmu, psi, dpsi, tol=1e-9):
         '''
         Solves the BEM equations at the given section.
         '''
+        psi = np.radians(psi)
+        dpsi = np.radians(dpsi)
         chord, twist = self.blade.get_geo(mu)
         sigma_r = self.blade.n_blades*chord/(2*np.pi*mu*self.blade.radius)
         a0, ap0 = 1/3, 0
         fx, fy = 0, 0
         area = np.pi*(((mu+0.5*dmu)*self.blade.radius)**2 - ((mu-0.5*dmu)*self.blade.radius)**2)
+        area = area*dpsi/(2*np.pi)
         error = tol+1
         i = 0
         while tol < error:
-            phi = self.get_flow_angle(a0, ap0, mu)
+            u_a, u_t = self.get_velocities(a0, ap0, mu, psi)
+            phi = self.get_flow_angle(u_a, u_t)
             alpha = np.degrees(phi)-twist-self.blade.pitch
             cl, cd = self.blade.get_cl_cd(alpha)
-            w2_u2 = (1-a0)**2+(self.tsr*mu*(1+ap0))**2
+            w2_u2 = u_a**2+u_t**2
             cx = cl*np.cos(phi)+cd*np.sin(phi)
             cy = cl*np.sin(phi)-cd*np.cos(phi)
-            fx = 0.5*(w2_u2*100)*cx*chord #Uo2 = 100
-            fy = 0.5*(w2_u2*100)*cy*chord #Uo2 = 100
+            fx = 0.5*(w2_u2*100)*cx*chord*dpsi/(2*np.pi) #Uo2 = 100
+            fy = 0.5*(w2_u2*100)*cy*chord*dpsi/(2*np.pi) #Uo2 = 100
             CT = fx*self.blade.n_blades*dmu*self.blade.radius/(0.5*100*area)
             f = self.get_prandtl(a0, mu)
             a = self.get_a(CT)
@@ -111,14 +127,14 @@ class BEMSolver():
             # Relaxing the induction factors is necessary for convergence near
             # the root
             a0, ap0 = 0.75*a0+0.25*a, 0.75*ap0+0.25*ap
-            #print(i)
+            # print(i)
             i += 1
         return a, ap, fx, fy
 
 
 if __name__ == '__main__':
     blade = Blade()
-    solver = BEMSolver(blade, 6)
-    #a, ap, fx, fy = solver.solve(0.505)
-    #print(a, ap, fx, fy)
-    graph(blade, solver)
+    solver = BEMSolver(blade, 6, 30)
+    a, ap, fx, fy = solver.solve(0.505, 0.005, -30, 20)
+    # print(a, ap, fx, fy)
+    # graph(blade, solver)
