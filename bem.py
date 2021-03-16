@@ -45,8 +45,9 @@ class BEMSolver():
     Solves the BEM equations for the given geometry and conditions.
     '''
 
-    def __init__(self, blade, tsr, yaw):
+    def __init__(self, blade, u_inf, tsr, yaw):
         self.blade = blade
+        self.u_inf = u_inf
         self.tsr = tsr
         self.yaw = np.radians(yaw)
 
@@ -79,6 +80,23 @@ class BEMSolver():
         u_t = self.tsr*mu*(1+ap)-np.sin(self.yaw)*np.cos(psi)
         return u_a, u_t
 
+    def get_forces(self, chord, twist, a0, ap0, mu, psi, dmu, dpsi):
+        '''
+        Calculates the forces at the given position.
+        '''
+        u_a, u_t = self.get_velocities(a0, ap0, mu, psi)
+        phi = self.get_flow_angle(u_a, u_t)
+        alpha = np.degrees(phi)-twist-self.blade.pitch
+        cl, cd = self.blade.get_cl_cd(alpha)
+        w2_u2 = u_a**2+u_t**2
+        cx = cl*np.cos(phi)+cd*np.sin(phi)
+        cy = cl*np.sin(phi)-cd*np.cos(phi)
+        fx = 0.5*w2_u2*self.u_inf**2*cx*self.blade.n_blades
+        fx = fx*chord*dpsi/(2*np.pi)*dmu*self.blade.radius
+        fy = 0.5*w2_u2*self.u_inf**2*cy*self.blade.n_blades
+        fy = fy*chord*dpsi/(2*np.pi)*dmu*self.blade.radius
+        return fx, fy
+
     def get_a(self, CT):
         '''
         Calculates a given CT applies glauert correction.
@@ -98,31 +116,21 @@ class BEMSolver():
         psi = np.radians(psi)
         dpsi = np.radians(dpsi)
         chord, twist = self.blade.get_geo(mu)
-        sigma_r = self.blade.n_blades*chord/(2*np.pi*mu*self.blade.radius)
         a0, ap0 = 1/3, 0
-        fx, fy = 0, 0
-        area = np.pi*(((mu+0.5*dmu)*self.blade.radius)**2 - ((mu-0.5*dmu)*self.blade.radius)**2)
+        area = np.pi*(((mu+0.5*dmu)*self.blade.radius)**2
+                      - ((mu-0.5*dmu)*self.blade.radius)**2)
         area = area*dpsi/(2*np.pi)
         error = tol+1
         i = 0
         while tol < error:
-            u_a, u_t = self.get_velocities(a0, ap0, mu, psi)
-            phi = self.get_flow_angle(u_a, u_t)
-            alpha = np.degrees(phi)-twist-self.blade.pitch
-            cl, cd = self.blade.get_cl_cd(alpha)
-            w2_u2 = u_a**2+u_t**2
-            cx = cl*np.cos(phi)+cd*np.sin(phi)
-            cy = cl*np.sin(phi)-cd*np.cos(phi)
-            fx = 0.5*(w2_u2*100)*cx*chord*dpsi/(2*np.pi) #Uo2 = 100
-            fy = 0.5*(w2_u2*100)*cy*chord*dpsi/(2*np.pi) #Uo2 = 100
-            CT = fx*self.blade.n_blades*dmu*self.blade.radius/(0.5*100*area)
             f = self.get_prandtl(a0, mu)
+            fx, fy = self.get_forces(chord, twist, a0, ap0, mu, psi, dmu, dpsi)
+            CT = fx/(0.5*area*self.u_inf**2)
+            cfy = fy/(0.5*area*self.u_inf**2)
             a = self.get_a(CT)
-            ap = fy*self.blade.n_blades/(4*np.pi*mu*self.blade.radius*100*(1-a)*self.tsr*mu)
+            ap = cfy/(4*(1-a)*self.tsr*mu)
             a = a/f
             ap = ap/f
-            #a = w2_u2*sigma_r*cx/(4*(1-a0)*f)
-            #ap = w2_u2*sigma_r*cy/(4*(1-a0)*self.tsr*mu*f)
             error = max([abs(a-a0), abs(ap-ap0)])
             # Relaxing the induction factors is necessary for convergence near
             # the root
@@ -132,9 +140,54 @@ class BEMSolver():
         return a, ap, fx, fy
 
 
+class Rotor:
+    '''
+    Stores the BEM results over the rotor for the given conditions.
+    '''
+
+    def __init__(self, blade, n_r, n_az):
+        '''
+        Discretises the rotor.
+        '''
+        self.blade = blade
+        self.n_r = n_r
+        self.mu = np.linspace(0.2, 1, n_r)
+        self.n_az = n_az
+        self.psi = np.linspace(-180, 180, n_az)
+
+    def solve(self, u_inf, tsr, yaw):
+        '''
+        Solves the BEM equations for the given conditions.
+        '''
+        solver = BEMSolver(self.blade, u_inf, tsr, yaw)
+        a = np.zeros((self.n_r, self.n_az))
+        ap = np.zeros((self.n_r, self.n_az))
+        fx = np.zeros((self.n_r, self.n_az))
+        fy = np.zeros((self.n_r, self.n_az))
+        for i in range(self.n_r-1):
+            for j in range(self.n_az-1):
+                mu = 0.5*(self.mu[i]+self.mu[i+1])
+                dmu = self.mu[i+1]-self.mu[i]
+                psi = 0.5*(self.psi[j]+self.psi[j+1])
+                dpsi = self.psi[j+1]-self.psi[j]
+                solution = solver.solve(mu, dmu, psi, dpsi)
+                a[i, j] = solution[0]
+                ap[i, j] = solution[1]
+                fx[i, j] = solution[2]
+                fy[i, j] = solution[3]
+            print(f'Position mu = {mu:.4f} has been solved.')
+        self.a = a
+        self.ap = ap
+        self.fx = fx
+        self.fy = fy
+
+
 if __name__ == '__main__':
     blade = Blade()
-    solver = BEMSolver(blade, 6, 30)
-    a, ap, fx, fy = solver.solve(0.505, 0.005, -30, 20)
+    u_inf, tsr, yaw = 10, 6, 30
+    # solver = BEMSolver(blade, u_inf, tsr, yaw)
+    # a, ap, fx, fy = solver.solve(0.505, 0.005, 30, 20)
+    rotor = Rotor(blade, 51, 21)
+    rotor.solve(u_inf, tsr, yaw)
     # print(a, ap, fx, fy)
     # graph(blade, solver)
