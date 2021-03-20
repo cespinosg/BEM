@@ -165,9 +165,9 @@ class Rotor:
         fx = np.zeros((self.n_r, self.n_az))
         fy = np.zeros((self.n_r, self.n_az))
         for i in range(self.n_r-1):
+            mu = 0.5*(self.mu[i]+self.mu[i+1])
+            dmu = self.mu[i+1]-self.mu[i]
             for j in range(self.n_az-1):
-                mu = 0.5*(self.mu[i]+self.mu[i+1])
-                dmu = self.mu[i+1]-self.mu[i]
                 psi = 0.5*(self.psi[j]+self.psi[j+1])
                 dpsi = self.psi[j+1]-self.psi[j]
                 solution = solver.solve(mu, dmu, psi, dpsi)
