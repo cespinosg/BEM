@@ -47,8 +47,8 @@ class BEMSolver():
     Solves the BEM equations for the given geometry and conditions.
     '''
 
-    keys = ['a', 'ap', 'f', 'fx', 'fy', 'phi', 'w2_u2', 'alpha', 'cl', 'cd',
-            'gamma']
+    keys = ['a', 'ap', 'f', 'cx', 'cy', 'fx', 'fy', 'phi', 'w2_u2', 'alpha',
+            'cl', 'cd', 'gamma', 'dmu', 'dpsi']
 
     def __init__(self, blade, u_inf, tsr, yaw, prandtl=True):
         self.blade = blade
@@ -101,10 +101,10 @@ class BEMSolver():
         w2_u2 = u_a**2+u_t**2
         cx = cl*np.cos(phi)+cd*np.sin(phi)
         cy = cl*np.sin(phi)-cd*np.cos(phi)
-        fx = 0.5*w2_u2*self.u_inf**2*cx*self.blade.n_blades
-        fx = fx*chord*dpsi/(2*np.pi)*dmu*self.blade.radius
-        fy = 0.5*w2_u2*self.u_inf**2*cy*self.blade.n_blades
-        fy = fy*chord*dpsi/(2*np.pi)*dmu*self.blade.radius
+        fx = 0.5*w2_u2*self.u_inf**2*cx
+        fx = fx*self.blade.n_blades*chord*dpsi/(2*np.pi)*dmu*self.blade.radius
+        fy = 0.5*w2_u2*self.u_inf**2*cy
+        fy = fy*self.blade.n_blades*chord*dpsi/(2*np.pi)*dmu*self.blade.radius
         return fx, fy
 
     def get_a(self, CT):
@@ -152,9 +152,12 @@ class BEMSolver():
         phi = self.get_flow_angle(u_a, u_t)
         alpha = np.degrees(phi)-twist-self.blade.pitch
         cl, cd = self.blade.get_cl_cd(alpha)
+        cx = cl*np.cos(phi)+cd*np.sin(phi)
+        cy = cl*np.sin(phi)-cd*np.cos(phi)
         w2_u2 = u_a**2+u_t**2
         gamma = 0.5*self.u_inf*chord*cl
-        solution = [a, ap, f, fx, fy, phi, w2_u2, alpha, cl, cd, gamma]
+        solution = [a, ap, f, cx, cy, fx, fy, phi, w2_u2, alpha, cl, cd,
+                    gamma, dmu, dpsi]
         solution = dict(zip(self.keys, solution))
         return solution
 
@@ -195,6 +198,7 @@ class Rotor:
                 df.loc[(mu, psi)] = solver.solve(mu, dmu, psi, dpsi)
             print(f'Position mu = {mu:.4f} has been solved.')
         self.df = df
+        self.az_av = self.azimuth_average()
 
     def azimuth_average(self):
         '''
@@ -206,6 +210,8 @@ class Rotor:
         for mu in self.mu_e:
             av = {c: sum(self.df.loc[mu][c]*self.dpsi)/sum(self.dpsi) for c in cols}
             df.loc[mu] = av
+        df['fx'] = df['fx']*(self.n_az-1)
+        df['fy'] = df['fy']*(self.n_az-1)
         return df
 
     def to_csv(self, path):
@@ -216,14 +222,13 @@ class Rotor:
             os.makedirs(path)
         csv_file = self.solver.name+'-'+self.name
         self.df.to_csv(os.path.join(path, csv_file+'.csv'))
-        average = self.azimuth_average()
-        average.to_csv(os.path.join(path, csv_file+'_az_av.csv'))
+        self.az_av.to_csv(os.path.join(path, csv_file+'_az_av.csv'))
 
 
 if __name__ == '__main__':
     blade = Blade()
     u_inf, tsr, yaw = 10, 8, 0
-    solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=True)
+    solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=False)
     # solution = solver.solve(0.505, 0.005, 30, 20)
     # print(solution)
     rotor = Rotor(51, 5)
@@ -232,5 +237,5 @@ if __name__ == '__main__':
     # av = rotor.azimuth_average()
     # az0 = list(set(rotor.df.index.get_level_values('azimuth')))[0]
     # print(max(abs(av['a']-rotor.df['a'].xs(az0, level='azimuth'))))
-    rotor.to_csv('../results/prandtl')
+    rotor.to_csv('../results/tip-correction/no-prandtl')
     # graph(blade, solver)
