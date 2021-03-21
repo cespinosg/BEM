@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pandas as pd
 # from graph import *
@@ -45,21 +47,29 @@ class BEMSolver():
     Solves the BEM equations for the given geometry and conditions.
     '''
 
-    def __init__(self, blade, u_inf, tsr, yaw):
+    keys = ['a', 'ap', 'f', 'fx', 'fy', 'phi', 'w2_u2', 'alpha', 'cl', 'cd',
+            'gamma']
+
+    def __init__(self, blade, u_inf, tsr, yaw, prandtl=True):
         self.blade = blade
         self.u_inf = u_inf
         self.tsr = tsr
         self.yaw = np.radians(yaw)
+        self.prandtl = prandtl
+        self.name = f'u_inf-{u_inf}-tsr-{tsr}-yaw-{yaw}'
 
     def get_prandtl(self, a, mu):
         '''
         Calculates the Prandtl loss factor.
         '''
-        d = 2*np.pi/self.blade.n_blades*(1-a)/np.sqrt(self.tsr**2+1/(mu**2)*(1-a)**2)
-        f_tip = 2/np.pi*np.arccos(np.exp(-np.pi*(1-mu)/d))
-        mu_hub = self.blade.df['mu'][0]
-        f_root = 2/np.pi*np.arccos(np.exp(-np.pi*(mu-mu_hub)/d))
-        f = f_tip*f_root+1e-4
+        if self.prandtl:
+            d = 2*np.pi/self.blade.n_blades*(1-a)/np.sqrt(self.tsr**2+1/(mu**2)*(1-a)**2)
+            f_tip = 2/np.pi*np.arccos(np.exp(-np.pi*(1-mu)/d))
+            mu_hub = self.blade.df['mu'][0]
+            f_root = 2/np.pi*np.arccos(np.exp(-np.pi*(mu-mu_hub)/d))
+            f = f_tip*f_root+1e-4
+        else:
+            f = 1
         return f
 
     def get_flow_angle(self, u_a, u_t):
@@ -137,7 +147,16 @@ class BEMSolver():
             a0, ap0 = 0.75*a0+0.25*a, 0.75*ap0+0.25*ap
             # print(i)
             i += 1
-        return a, ap, fx, fy
+        f = self.get_prandtl(a, mu)
+        u_a, u_t = self.get_velocities(a, ap, mu, psi)
+        phi = self.get_flow_angle(u_a, u_t)
+        alpha = np.degrees(phi)-twist-self.blade.pitch
+        cl, cd = self.blade.get_cl_cd(alpha)
+        w2_u2 = u_a**2+u_t**2
+        gamma = 0.5*self.u_inf*chord*cl
+        solution = [a, ap, f, fx, fy, phi, w2_u2, alpha, cl, cd, gamma]
+        solution = dict(zip(self.keys, solution))
+        return solution
 
 
 class Rotor:
@@ -145,49 +164,73 @@ class Rotor:
     Stores the BEM results over the rotor for the given conditions.
     '''
 
-    def __init__(self, blade, n_r, n_az):
+    def __init__(self, n_r, n_az):
         '''
-        Discretises the rotor.
+        Discretises the rotor with the given number of nodes.
         '''
-        self.blade = blade
+        self.name = f'n_r-{n_r}-n_az-{n_az}'
         self.n_r = n_r
-        self.mu = np.linspace(0.2, 1, n_r)
+        self.mu_n = np.linspace(0.2, 1, n_r)  # nodes
+        self.mu_e = 0.5*(self.mu_n[1:]+self.mu_n[:-1])  # elements
+        self.dmu = self.mu_n[1:]-self.mu_n[:-1]
         self.n_az = n_az
-        self.psi = np.linspace(-180, 180, n_az)
+        self.psi_n = np.linspace(-180, 180, n_az)  # nodes
+        self.psi_e = 0.5*(self.psi_n[1:]+self.psi_n[:-1])  # elements
+        self.dpsi = self.psi_n[1:]-self.psi_n[:-1]
 
-    def solve(self, u_inf, tsr, yaw):
+    def solve(self, solver):
         '''
-        Solves the BEM equations for the given conditions.
+        Solves the BEM equations with the given solver.
         '''
-        solver = BEMSolver(self.blade, u_inf, tsr, yaw)
-        a = np.zeros((self.n_r, self.n_az))
-        ap = np.zeros((self.n_r, self.n_az))
-        fx = np.zeros((self.n_r, self.n_az))
-        fy = np.zeros((self.n_r, self.n_az))
+        self.solver = solver
+        index = pd.MultiIndex.from_product([self.mu_e, self.psi_e],
+                                           names=['mu', 'azimuth'])
+        df = pd.DataFrame(columns=solver.keys, index=index)
         for i in range(self.n_r-1):
-            mu = 0.5*(self.mu[i]+self.mu[i+1])
-            dmu = self.mu[i+1]-self.mu[i]
+            mu = self.mu_e[i]
+            dmu = self.dmu[i]
             for j in range(self.n_az-1):
-                psi = 0.5*(self.psi[j]+self.psi[j+1])
-                dpsi = self.psi[j+1]-self.psi[j]
-                solution = solver.solve(mu, dmu, psi, dpsi)
-                a[i, j] = solution[0]
-                ap[i, j] = solution[1]
-                fx[i, j] = solution[2]
-                fy[i, j] = solution[3]
+                psi = self.psi_e[j]
+                dpsi = self.dpsi[j]
+                df.loc[(mu, psi)] = solver.solve(mu, dmu, psi, dpsi)
             print(f'Position mu = {mu:.4f} has been solved.')
-        self.a = a
-        self.ap = ap
-        self.fx = fx
-        self.fy = fy
+        self.df = df
+
+    def azimuth_average(self):
+        '''
+        Returns the fields averaged over the azimuth.
+        '''
+        cols = self.df.columns
+        df = pd.DataFrame(columns=cols, index=self.mu_e)
+        df.index.name = 'mu'
+        for mu in self.mu_e:
+            av = {c: sum(self.df.loc[mu][c]*self.dpsi)/sum(self.dpsi) for c in cols}
+            df.loc[mu] = av
+        return df
+
+    def to_csv(self, path):
+        '''
+        Saves the results in the given directory.
+        '''
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        csv_file = self.solver.name+'-'+self.name
+        self.df.to_csv(os.path.join(path, csv_file+'.csv'))
+        average = self.azimuth_average()
+        average.to_csv(os.path.join(path, csv_file+'_az_av.csv'))
 
 
 if __name__ == '__main__':
     blade = Blade()
-    u_inf, tsr, yaw = 10, 6, 30
-    # solver = BEMSolver(blade, u_inf, tsr, yaw)
-    # a, ap, fx, fy = solver.solve(0.505, 0.005, 30, 20)
-    rotor = Rotor(blade, 51, 21)
-    rotor.solve(u_inf, tsr, yaw)
-    # print(a, ap, fx, fy)
+    u_inf, tsr, yaw = 10, 8, 0
+    solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=True)
+    # solution = solver.solve(0.505, 0.005, 30, 20)
+    # print(solution)
+    rotor = Rotor(51, 5)
+    rotor.solve(solver)
+    # check the azimuth average
+    # av = rotor.azimuth_average()
+    # az0 = list(set(rotor.df.index.get_level_values('azimuth')))[0]
+    # print(max(abs(av['a']-rotor.df['a'].xs(az0, level='azimuth'))))
+    rotor.to_csv('../results/prandtl')
     # graph(blade, solver)
