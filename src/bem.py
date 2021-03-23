@@ -155,7 +155,7 @@ class BEMSolver():
         cx = cl*np.cos(phi)+cd*np.sin(phi)
         cy = cl*np.sin(phi)-cd*np.cos(phi)
         w2_u2 = u_a**2+u_t**2
-        gamma = 0.5*self.u_inf*chord*cl
+        gamma = 0.5*np.sqrt(w2_u2)*self.u_inf*chord*cl
         solution = [a, ap, f, cx, cy, fx, fy, phi, w2_u2, alpha, cl, cd,
                     gamma, dmu, dpsi]
         solution = dict(zip(self.keys, solution))
@@ -233,7 +233,7 @@ class Rotor:
 if __name__ == '__main__':
     blade = Blade()
     u_inf, tsr, yaw = 10, 8, 0
-    solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=False)
+    solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=True)
     # solution = solver.solve(0.505, 0.005, 30, 20)
     # print(solution)
     rotor = Rotor(51, 5)
@@ -242,5 +242,5 @@ if __name__ == '__main__':
     # av = rotor.azimuth_average()
     # az0 = list(set(rotor.df.index.get_level_values('azimuth')))[0]
     # print(max(abs(av['a']-rotor.df['a'].xs(az0, level='azimuth'))))
-    rotor.to_csv('../results/tip-correction/no-prandtl')
+    rotor.to_csv('../results/tip-correction/prandtl')
     # graph(blade, solver)

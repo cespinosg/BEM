@@ -16,6 +16,7 @@ plt.rc('savefig', dpi=200, bbox='tight')
 U_INF = 10
 TSR = 8
 R = 50
+N_BLADES = 3
 
 
 def read_csv(path):
@@ -28,7 +29,7 @@ def read_csv(path):
     df['dcp_dmu'] = df['dcp']/df['dmu']
     df['dcs_dmu'] = df['dcp']/(TSR*df['mu']*df['dmu'])
     df['gamma_'] = df['gamma']*TSR/(U_INF*R)
-    df['gamma_conv'] = np.sqrt(df['w2_u2'])*df['gamma']*np.cos(df['phi'])/(U_INF*np.pi*df['mu']*R)
+    df['gamma_conv'] = N_BLADES*np.sqrt(df['w2_u2'])*df['gamma']*np.cos(df['phi'])/(U_INF*np.pi*df['mu']*R)
     return df
 
 
