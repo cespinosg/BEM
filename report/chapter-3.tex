@@ -112,7 +112,31 @@ f(\mu) = \frac{2}{\pi} \arccos \left[ \exp \left( - \frac{B}{2} \left( \frac{1-\
 
 \section{Evaluation of stagnation enthalpy \textcolor{green}{CARLOS}}
 
-Plot the distribution of stagnation enthalpy as a function of radius at four locations: infinity upwind, at the rotor (upwind side), at the rotor (downwind side), infinity downwind.
+If heat exchange, viscous forces and compressibility effects are neglected, the flow temperature does not change. Therefore, it can be assumed that the air's internal energy is always constant. Then, the changes in stagnation enthalpy and stagnation pressure are equivalent. The mechanical energy equation (\ref{eq:mech-energy}) describes how the stagnation pressure $ p_t $ changes. Note that it has been obtained as the scalar product of the momentum equation and the velocity vector.
+
+\begin{equation}
+	\vec{v} \cdot \vec{\nabla} p_t = \vec{v} \cdot \vec{\nabla} \vec{\vec{\tau}} + \vec{v} \cdot \vec{b}
+	\label{eq:mech-energy}
+\end{equation}
+
+If viscous forces are not considered, $ \tau = 0 $, the stagnation pressure can only due to the body forces $ b $ work. The only domain region where these forces are not null, and therefore, exert some work is the rotor plane. This means that the stagnation pressure only changes across the rotor plane. See equations (\ref{eq:pt-up}) and (\ref{eq:pt-down}) for the stagnation pressure expressions up and down-stream of the rotor plane respectively. They are plotted in Figure \ref{img:pt}.
+
+\begin{equation}
+	p_{t_u} = p_a + \frac{1}{2} \rho u_{\infty}^2
+	\label{eq:pt-up}
+\end{equation}
+
+\begin{equation}
+	p_{t_d} = p_a + \frac{1}{2} \rho u_{\infty}^2 (1-2a)^2
+	\label{eq:pt-down}
+\end{equation}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=0.45\textheight]{./img/stagnation-enthalpy.pdf}
+	\caption{Stagnation enthalpy distribution.}
+	\label{img:pt}
+\end{figure}
 
 \section{System of circulation and vorticity \textcolor{green}{CARLOS}}
 

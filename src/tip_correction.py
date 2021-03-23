@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import bem
-
 
 plt.rcdefaults()
 plt.rc('lines', markersize=4)
@@ -94,7 +92,7 @@ if __name__ == '__main__':
     # plot_tip_corr(prandtl, no_prandtl, 'dct_dmu', r'$dC_T/d\mu$ [-]', path)
     # plot_tip_corr(prandtl, no_prandtl, 'alpha', r'$\alpha$ [deg]', path)
     # plot_tip_corr(prandtl, no_prandtl, 'phi', r'$\phi$ [deg]', path)
-    plot_tip_corr(prandtl, no_prandtl, 'w2_u2', r'$w^2/u_{\infty}^2$ [deg]', path)
+    # plot_tip_corr(prandtl, no_prandtl, 'w2_u2', r'$w^2/u_{\infty}^2$ [deg]', path)
     # plot_tip_corr(prandtl, no_prandtl, 'a', r'a [-]', path)
     # plot_tip_corr(prandtl, no_prandtl, 'f', r'Tip correction f [-]', path)
     print_results(prandtl, no_prandtl)
