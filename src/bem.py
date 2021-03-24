@@ -155,7 +155,7 @@ class BEMSolver():
         cx = cl*np.cos(phi)+cd*np.sin(phi)
         cy = cl*np.sin(phi)-cd*np.cos(phi)
         w2_u2 = u_a**2+u_t**2
-        gamma = 0.5*self.u_inf*chord*cl
+        gamma = 0.5*np.sqrt(w2_u2)*self.u_inf*chord*cl
         solution = [a, ap, f, cx, cy, fx, fy, phi, w2_u2, alpha, cl, cd,
                     gamma, dmu, dpsi]
         solution = dict(zip(self.keys, solution))
@@ -212,6 +212,11 @@ class Rotor:
             df.loc[mu] = av
         df['fx'] = df['fx']*(self.n_az-1)
         df['fy'] = df['fy']*(self.n_az-1)
+        u_inf = self.solver.u_inf
+        surf = np.pi*self.solver.blade.radius**2
+        tsr = self.solver.tsr
+        df['dct'] = df['fx']/(0.5*u_inf**2*surf)
+        df['dcp'] = df['fy']*tsr*df.index/(0.5*u_inf**2*surf)
         return df
 
     def to_csv(self, path):
@@ -229,7 +234,7 @@ class Rotor:
 
 if __name__ == '__main__':
     blade = Blade()
-    u_inf, tsr, yaw = 10, 6, 15
+    u_inf, tsr, yaw = 10, 8, 0
     solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=True)
     # solution = solver.solve(0.505, 0.005, 30, 20)
     # print(solution)
