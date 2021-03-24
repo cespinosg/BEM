@@ -1,22 +1,103 @@
 \chapter{Results}
 
+In this section are presented the main outcomes obtained when simulating the wind turbine model described preivously.  First are presented the results estimated for a wind turbine rotor that is is alligned with the incoming flow. Next are presented the same results but for a rotor that it is not laterally alligned with the incoming flow, named as yawed rotor. After that its is described the effect of some extra features included in the BEM analysis such as the influence of the tip correction and numerical discretization, the evaluation of stagnation enthalpy or the evaluation of the system's circulation and vorticity.\\
 
 Describe the initial conditions, table, cool
 
 
-\section{BEM alligned rotor \textcolor{red}{BERNAT}}
+\section{BEM alligned rotor}
+
+In this section it is considered that the rotor is fully alligned with the incoming flow as it would be in an ideal case. The discretization used to compute the main results includes 50 divisions in the radial position. The discretization is uniformly spaced using the same increment between adjacent sections.  
+
+\subsection{Main outputs }
+
+The main outputs described in this sections would help the user identify the behaviour of the key variables that affect the rotor performance. Under this conditions the variables will only see its values affected by the radial position and not by their azimuthal position. The results are easily represented using only one value (the weighted average) per span section in a 2D plot that represents the variable versus the span section.  
+
+\subsubsection{\textbf{Angle of attack and inflow angle}  \textcolor{red}{BERNAT}}
+
+In Fig. \ref{Inflow_alligned} are displayed the inflow angle and angle of attack of each tip speed ratio study case. 
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{Inflow_plt_alligned.png}
+\caption{Inflow angle vs. Radius distribution at different TSR values}
+\centering
+\label{Inflow_alligned}
+\end{figure}
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{AoA_plt_alligned.png}
+\caption{Angle of attack vs. Radius distribution at different TSR values}
+\centering
+\label{AoA_alligned}
+\end{figure}
+
+The results are coherent with the tip speed ratio defiinition. In the study the freeflow incoming velocity is fixed at 10 m/s, so for the different TSR values the parameter changing is the rotor rotational speed $\Omega $. At higher $\Omega $ values the rotational speed component is bigger and thus the inflow angle will decrease as shown in the plots. The angle of attack distribution also matches. Per definition, the geometrical twist of the blade could be obtained from these plots as the difference between the inflow angle and the angle of attack, which is a function of the $\mu$ parameter. \\
+
+It must be higlighted that for the TSR=6 the inboard part of the blade is under stall conditions, hence will be a poor power generation section. This can be concluded because the stall AoA is included in the plot. In this study the stall AoA has a contstant value along the entire span because the blade is built entirely with the same airfoil model. In commercial WTGs the blades use different airfoils depending on the radial section. If this WT model had to be design to operate most of the time under these conditions the optimal aerodynamic performance would probably be given at a TSR between 6 and 8. Because as it can be seen from Fig XXX , the maximum CL/CD ratio is obatined at AoA ranged between 7.5 and 9.25 degrees.
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{CL_CD_plt.png}
+\caption{CL/CD ratio vs. Radius }
+\centering
+\label{CL_CD_alligned}
+\end{figure}
 
 
-\subsection{Main outputs \textcolor{red}{BERNAT}}
+\subsubsection{\textbf{Axial and azimuthal inductions}  \textcolor{red}{BERNAT}}
+
+In Fig. \ref{Inflow_alligned} are displayed the distribution of axial and tangential inductions of TSR case study. 
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{a_plt_alligned.png}
+\caption{Axial induction factor vs. Radius distribution at different TSR values}
+\centering
+\label{a_alligned}
+\end{figure}
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{ap_plt_alligned.png}
+\caption{Tangential induction factor vs. Radius distribution at different TSR values}
+\centering
+\label{ap_alligned}
+\end{figure}
 
 
-\subsubsection{Angle of attack and inflow angle \textcolor{red}{BERNAT}}
 
-\subsubsection{Axial and azimuthal inductions \textcolor{red}{BERNAT}}
+\subsubsection{\textbf{Thrust and azimuthal loading} \textcolor{red}{BERNAT}}
 
-\subsubsection{Thrust and azimuthal loading \textcolor{red}{BERNAT}}
+In Fig. \ref{thrust_alligned} are displayed the distribution of axial and tangential loads acting on the rotor for each TSR case study. 
 
-\subsubsection{Total thrust and torque \textcolor{red}{BERNAT}}
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{thrust_plt_alligned.png}
+\caption{Thrust vs. Radius distribution at different TSR values}
+\centering
+\label{thrust_alligned}
+\end{figure}
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{tang_plt_alligned.png}
+\caption{Tangential force vs. Radius distribution at different TSR values}
+\centering
+\label{tang_alligned}
+\end{figure}
+
+As it is mentioned in the previous subsection, in the TSR=6 operation regime the inboard part of the blade (approximately until 25m) loses its capacity to extract energy from the wind to generate thrust and torque. Under these conditions the inboard sections are experiencing inflow and AOA angles too high and the cross-sections airfoils are operating outside their optimal regime. This effect could have been partly mitigated if the polars of those inner sections would have been corrected by the 3D effects such as the Snel correction proposed in the introduction. \\
+
+The most intensively-loaded sections are the ones closer to the tip. This was expected by looking at the AoA radial distribution. Those sections operate at the uppper range of the CL lienar region, close to stall, where the CL/CD ratio is better. But the AoA is not the only parameter afecting the performance, if it was like that the curves at higher TSR would generate larger loads. It has to be taken into account that in the way the TSR modifications in this assignment consider the incoming flow velocity $U_{\infty}$ and Blade Radius $R$ constant, meaning that the only paraeter changing its value is the rotor speed $\Omega$. Thus, what is being done when increasing the TSR is increasing the absolute value of the relative velocity seen by the sections, which would end up increasing severly the loads as it afects the term that is at a power of 2. 
+
+\subsubsection{\textbf{Total thrust and torque} \textcolor{red}{BERNAT}}
+
+Table \ref{total_forces_alligned} provides the values obtained for the total Thrust and Torque generated by the WTG at the different TSR. The total thrust force hass been computed as the sum of the axial forces $fx$ generated by each annulus section. The total torque has been computed as the sum of the products of the tangential force $fy$ and the radial position $r$ of each annular section. In the previous sections the loads have been provided without taking into account the density, thus with units $ \frac{N}{Kg/m^3} $. However, in Table XXX the total forces have been estimated for a standard density $\rho = 1.225 kg/m^3$ to give a better overview of the rotor performance.
+
+\begin{table}[htpb]
+\begin{tabular}{lllll}
+\cline{2-4}
+\multicolumn{1}{l|}{}                            & \multicolumn{1}{l|}{\textbf{TSR = 6}} & \multicolumn{1}{l|}{\textbf{TSR = 8}} & \multicolumn{1}{l|}{\textbf{TSR = 10}} &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{Thrust {[}kN{]}}}   & \multicolumn{1}{l|}{235.443}          & \multicolumn{1}{l|}{316.605}          & \multicolumn{1}{l|}{369.669}           &  \\ \cline{1-4}
+\multicolumn{1}{|l|}{\textbf{Torque {[}kN�m{]}}} & \multicolumn{1}{l|}{1464.494}         & \multicolumn{1}{l|}{1361.402}         & \multicolumn{1}{l|}{1116.159}          &  \\ \cline{1-4}
+\end{tabular}
+\label{total_forces_alligned}
+\end{table}
 
 
 \section{BEM yawed rotor \textcolor{blue}{NIKLAS}}
@@ -32,6 +113,40 @@ Describe the initial conditions, table, cool
 \subsubsection{Thrust and azimuthal loading \textcolor{blue}{NIKLAS}}
 
 \subsubsection{Total thrust and torque \textcolor{blue}{NIKLAS}}
+
+\subsection{\textbf{Influence of numerical discretization} }
+
+This subsection provides information about the influence that the numerical discretization has in the final results. The rotor conditions taken to carry out this analysis are at fixed at TSR = 8 and $U_{\infty} $ = 10 m/s. For the yawed cases the missalignment angle is set to 15 degrees. \\
+
+The first analysis is focused on the effect of the different spacing methods to apply in the radial divisions. The most straight-forward is to use an uniformly spaced distribution that has a constant radius increment in adjacent sections. The proposed alternative in this study is to use a cosine-spaced radial distribution. This method is widely used for executing panel methods on 2D airfoils because an airfoil usually has more curvature on the LE. Hence, for more a more accurate calculation in this region it is necessary to have finer divisions. Figure XXX provides an example of how the distrubution of $\mu$ nodes will be for a 15-nodes configuration using the two methods mentioned. The values in the y-axis are irrelevant, are just separated enough to provide a good overview of the x-axis discretization. 
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{ex_cos_plt.png}
+\caption{Distribution of 15 $\mu$ nodes with different division strategies }
+\centering
+\label{mu_nodes}
+\end{figure}
+
+Taking into account Figure XXX it can be seen that the cosine spaced distribution provides smaller divisions at the edges of the range. For the WT model this would mean that the more refined regions in the study are in the root and tip of the rotor. Both regions have the feature to be the ones where the Prandtl tip correction factor has more effect and where it is also varying more with respect to the span. This is the main reason why it has been decided to use this kind of discretization here. The results for both methodologies are ploted in Figure \ref{thrust_conv_alligned}. From this data it is obvious to conclude that the cosine spaced discretization is more efficient and converges faster. However it has to be mentioned that when forcing strict convergence tolerances the code has some trouble convergeing for more than 61 cosine-spaced divisions. This is probably due to the very tinny sections at the root and tip. Nevertheless, in the plot the value of Thrust for more than 61 divisions has been kept constant as it can be argumented that the 60th value was the exact value, as it keeps the asympthotic trend showed by the uniformly spaced cases. So to reach the converged value with the uniform distribution it will be necessary to use around 100 sections, while for the cosine it is enough with 50, only the half of it. Thus, using the cosine sapce could save up to 50$\%$ of the computational effort. 
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{Thrust_convergence_plt.png}
+\caption{Total Thrust convergence vs. number of radial sections}
+\centering
+\label{thrust_conv_alligned}
+\end{figure}
+
+Then a similar study has been carried out for the yawed case at 15 degrees and with 50 radial divisions for each method. Figure \ref{Thrust_conv_az_plt} displays the results obtained when using different numbers of azimutal sections. Again, this study has been executed for the two radially spaced methods. In this case it can bee seen that both methods do not converge in the same total Thrust value. This can be explained by looking again at Fig. \ref{thrust_conv_alligned}. From this plot it can be extracted that at 50 radial sections, both methodologies had not yet reached the same value. This is the difference seen in Fig. \ref{Thrust_conv_az_plt}. It is also worth to highlight that number of azimutal sections convergence seems to be decoupled of the radial discretization methdodology. Both techniques show variable behaviour until around 12 sections, where they reach a stable value. So computing the BEM in arcs of 30º seems to yield reliable results with this configuration.  
+
+
+\begin{figure}[htbp]
+\includegraphics[width=0.75\textwidth]{Thrust_conv_az_plt.png}
+\caption{Total Thrust convergence vs. number of azimutal sections}
+\centering
+\label{Thrust_conv_az_plt}
+\end{figure}
+
+
 
 \section{Influence of the tip correction \textcolor{green}{CARLOS}}
 
@@ -108,7 +223,6 @@ f(\mu) = \frac{2}{\pi} \arccos \left[ \exp \left( - \frac{B}{2} \left( \frac{1-\
 	\label{img:tc-f}
 \end{figure}
 
-\section{Influence of numerical discretization \textcolor{red}{BERNAT}}
 
 \section{Evaluation of stagnation enthalpy \textcolor{green}{CARLOS}}
 
