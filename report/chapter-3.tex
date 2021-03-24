@@ -115,7 +115,7 @@ f(\mu) = \frac{2}{\pi} \arccos \left[ \exp \left( - \frac{B}{2} \left( \frac{1-\
 If heat exchange, viscous forces and compressibility effects are neglected, the flow temperature does not change. Therefore, it can be assumed that the air's internal energy is always constant. Then, the changes in stagnation enthalpy and stagnation pressure are equivalent. The mechanical energy equation (\ref{eq:mech-energy}) describes how the stagnation pressure $ p_t $ changes. Note that it has been obtained as the scalar product of the momentum equation and the velocity vector.
 
 \begin{equation}
-	\vec{v} \cdot \vec{\nabla} p_t = \vec{v} \cdot \vec{\nabla} \vec{\vec{\tau}} + \vec{v} \cdot \vec{b}
+	\vec{v} \cdot \vec{\nabla} p_t = \vec{v} \cdot \vec{\nabla} \cdot \vec{\vec{\tau}} + \vec{v} \cdot \vec{f}
 	\label{eq:mech-energy}
 \end{equation}
 
@@ -140,6 +140,76 @@ If viscous forces are not considered, $ \tau = 0 $, the stagnation pressure can 
 
 \section{System of circulation and vorticity \textcolor{green}{CARLOS}}
 
-Plot a representation of the system of circulation. Discuss the generation and release of vorticity in relation to the loading and circulation over the blade.
+The circulation distribution over the blade is shown in Figure \ref{img:gamma_}. It has a more or less constant shape in the centre part of the blade, and vanishes quite steeply near the root and tip. This seems reasonable, since circulation is related to lift generation by the Kutta-Joukowski theorem: $ l = \rho u_{\infty} \Gamma $. In the blade extremes, lift must be zero, since there is no surface that can create it.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=0.45\textheight]{./img/circulation/gamma_.pdf}
+	\caption{Circulation distribution.}
+	\label{img:gamma_}
+\end{figure}
+
+The vorticity equation and Kutta-Jukowski theorem explain the changes observed in circulation. The thrust derivative with respect to the radius can be expressed using the Blade Element Theory, Kutta-Jukowski theorem and assuming no drag (\ref{eq:dT_dr_kj}), or using the Momentum Theory (\ref{eq:dT_dr_mt}).
+
+\begin{equation}
+	\frac{dT}{dr} = l \cos \phi = \rho w \Gamma \cos \phi
+	\label{eq:dT_dr_kj}
+\end{equation}
+
+\begin{equation}
+	\frac{dT}{dr} = \rho u_{\infty} (1-a) u_{\infty} 2a 2\pi r
+	\label{eq:dT_dr_mt}
+\end{equation}
+
+If the expressions (\ref{eq:dT_dr_kj}) and (\ref{eq:dT_dr_mt}) are equated, it can be seen that the circulation is related to the local thrust. This is shown in Figure \ref{img:vort-forces}, where the two sides of equation (\ref{eq:gamma-ct}) are plotted. The slightly higher values for the thrust coefficient may be due to the drag contribution, which is not accounted for in the circulation.
+
+\begin{equation}
+	\frac{w \Gamma \cos \phi}{u_{\infty}^2 \pi r} = 4a(1-a) = C_T
+	\label{eq:gamma-ct}
+\end{equation}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=0.45\textheight]{./img/circulation/vort-forces.pdf}
+	\caption{Circulation and local thrust coefficient distribution.}
+	\label{img:vort-forces}
+\end{figure}
+
+Equation (\ref{eq:gamma-ct}) is actually a different form of the vorticity equation (\ref{eq:vorticity}).
+
+\begin{equation}
+	\vec{v} \cdot \vec{\nabla} \vec{\omega} = \vec{\nabla} \times \vec{f}
+	\label{eq:vorticity}
+\end{equation}
+
+Assuming there are no radial forces, and that vorticity only changes in its direction ($d\omega_i/dx_j = 0$, if $ i \neq j $), the vorticity equation in the tangential direction can be simplified to better show how it relates to expression (\ref{eq:gamma-ct}).
+
+\begin{equation}
+	w \cos \pi \frac{d\omega}{rd\theta} = - \frac{df_x}{dr}
+	\label{eq:vort-tang}
+\end{equation}
+
+If equation (\ref{eq:vort-tang}) is integrated over the volume, expression \ref{eq:gamma-ct} is obtained. Remark that $ \int 1/r d\omega/d\theta dV = - \int \omega dS = - \Gamma $, and $ \int df_x/dr dV = dT/dr $.
+
+The same procedure can be done for the vorticity generation in the axial direction. In this case, the vorticity equation is the one shown in (\ref{eq:vort-axial}). The relationship between the circulation and tangential force is given by equation (\ref{eq:gamma-cs}).
+
+\begin{equation}
+	w \sin \pi \frac{d\omega}{dx} = \frac{df_{\theta}}{dr}
+	\label{eq:vort-axial}
+\end{equation}
+
+\begin{equation}
+	\frac{dS}{dr} = l \sin \phi = \rho w \sin \phi \Gamma = \rho u_{\infty} (1-a) \Omega r 2a' 2 \pi r
+	\label{eq:gamma-cs}
+\end{equation}
+
+The relationship between the tangential force and generation of circulation in the axial direction is depicted in Figure \ref{img:vort-forces-ax}. The differences observed may be due to the drag, which reduces the tangential force created by the lift.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=0.45\textheight]{./img/circulation/vort-forces-ax.pdf}
+	\caption{Circulation and local tangential coefficient distribution.}
+	\label{img:vort-forces-ax}
+\end{figure}
 
 \section{Operational point \textcolor{blue}{NIKLAS}}
