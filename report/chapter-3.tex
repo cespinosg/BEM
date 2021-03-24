@@ -18,14 +18,14 @@ The main outputs described in this sections would help the user identify the beh
 In Fig. \ref{Inflow_alligned} are displayed the inflow angle and angle of attack of each tip speed ratio study case. 
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{Inflow_plt_alligned.png}
+\includegraphics[width=0.75\textwidth]{./img/Inflow_plt_alligned.png}
 \caption{Inflow angle vs. Radius distribution at different TSR values}
 \centering
 \label{Inflow_alligned}
 \end{figure}
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{AoA_plt_alligned.png}
+\includegraphics[width=0.75\textwidth]{./img/AoA_plt_alligned.png}
 \caption{Angle of attack vs. Radius distribution at different TSR values}
 \centering
 \label{AoA_alligned}
@@ -36,7 +36,7 @@ The results are coherent with the tip speed ratio defiinition. In the study the 
 It must be higlighted that for the TSR=6 the inboard part of the blade is under stall conditions, hence will be a poor power generation section. This can be concluded because the stall AoA is included in the plot. In this study the stall AoA has a contstant value along the entire span because the blade is built entirely with the same airfoil model. In commercial WTGs the blades use different airfoils depending on the radial section. If this WT model had to be design to operate most of the time under these conditions the optimal aerodynamic performance would probably be given at a TSR between 6 and 8. Because as it can be seen from Fig XXX , the maximum CL/CD ratio is obatined at AoA ranged between 7.5 and 9.25 degrees.
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{CL_CD_plt.png}
+\includegraphics[width=0.75\textwidth]{./img/CL_CD_plt.png}
 \caption{CL/CD ratio vs. Radius }
 \centering
 \label{CL_CD_alligned}
@@ -48,14 +48,14 @@ It must be higlighted that for the TSR=6 the inboard part of the blade is under 
 In Fig. \ref{Inflow_alligned} are displayed the distribution of axial and tangential inductions of TSR case study. 
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{a_plt_alligned.png}
+\includegraphics[width=0.75\textwidth]{./img/a_plt_alligned.png}
 \caption{Axial induction factor vs. Radius distribution at different TSR values}
 \centering
 \label{a_alligned}
 \end{figure}
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{ap_plt_alligned.png}
+\includegraphics[width=0.75\textwidth]{./img/ap_plt_alligned.png}
 \caption{Tangential induction factor vs. Radius distribution at different TSR values}
 \centering
 \label{ap_alligned}
@@ -68,14 +68,14 @@ In Fig. \ref{Inflow_alligned} are displayed the distribution of axial and tangen
 In Fig. \ref{thrust_alligned} are displayed the distribution of axial and tangential loads acting on the rotor for each TSR case study. 
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{thrust_plt_alligned.png}
+\includegraphics[width=0.75\textwidth]{./img/thrust_plt_alligned.png}
 \caption{Thrust vs. Radius distribution at different TSR values}
 \centering
 \label{thrust_alligned}
 \end{figure}
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{tang_plt_alligned.png}
+\includegraphics[width=0.75\textwidth]{./img/tang_plt_alligned.png}
 \caption{Tangential force vs. Radius distribution at different TSR values}
 \centering
 \label{tang_alligned}
@@ -121,7 +121,7 @@ This subsection provides information about the influence that the numerical disc
 The first analysis is focused on the effect of the different spacing methods to apply in the radial divisions. The most straight-forward is to use an uniformly spaced distribution that has a constant radius increment in adjacent sections. The proposed alternative in this study is to use a cosine-spaced radial distribution. This method is widely used for executing panel methods on 2D airfoils because an airfoil usually has more curvature on the LE. Hence, for more a more accurate calculation in this region it is necessary to have finer divisions. Figure XXX provides an example of how the distrubution of $\mu$ nodes will be for a 15-nodes configuration using the two methods mentioned. The values in the y-axis are irrelevant, are just separated enough to provide a good overview of the x-axis discretization. 
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{ex_cos_plt.png}
+\includegraphics[width=0.75\textwidth]{./img/ex_cos_plt.png}
 \caption{Distribution of 15 $\mu$ nodes with different division strategies }
 \centering
 \label{mu_nodes}
@@ -130,7 +130,7 @@ The first analysis is focused on the effect of the different spacing methods to 
 Taking into account Figure XXX it can be seen that the cosine spaced distribution provides smaller divisions at the edges of the range. For the WT model this would mean that the more refined regions in the study are in the root and tip of the rotor. Both regions have the feature to be the ones where the Prandtl tip correction factor has more effect and where it is also varying more with respect to the span. This is the main reason why it has been decided to use this kind of discretization here. The results for both methodologies are ploted in Figure \ref{thrust_conv_alligned}. From this data it is obvious to conclude that the cosine spaced discretization is more efficient and converges faster. However it has to be mentioned that when forcing strict convergence tolerances the code has some trouble convergeing for more than 61 cosine-spaced divisions. This is probably due to the very tinny sections at the root and tip. Nevertheless, in the plot the value of Thrust for more than 61 divisions has been kept constant as it can be argumented that the 60th value was the exact value, as it keeps the asympthotic trend showed by the uniformly spaced cases. So to reach the converged value with the uniform distribution it will be necessary to use around 100 sections, while for the cosine it is enough with 50, only the half of it. Thus, using the cosine sapce could save up to 50$\%$ of the computational effort. 
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{Thrust_convergence_plt.png}
+\includegraphics[width=0.75\textwidth]{./img/Thrust_convergence_plt.png}
 \caption{Total Thrust convergence vs. number of radial sections}
 \centering
 \label{thrust_conv_alligned}
@@ -140,7 +140,7 @@ Then a similar study has been carried out for the yawed case at 15 degrees and w
 
 
 \begin{figure}[htbp]
-\includegraphics[width=0.75\textwidth]{Thrust_conv_az_plt.png}
+\includegraphics[width=0.75\textwidth]{./img/Thrust_conv_az_plt.png}
 \caption{Total Thrust convergence vs. number of azimutal sections}
 \centering
 \label{Thrust_conv_az_plt}
