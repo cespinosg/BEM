@@ -223,12 +223,14 @@ class Rotor:
         csv_file = self.solver.name+'-'+self.name
         self.df.to_csv(os.path.join(path, csv_file+'.csv'))
         self.az_av.to_csv(os.path.join(path, csv_file+'_az_av.csv'))
+        #print(csv_file+'.csv')
+        #print(csv_file+'_az_av.csv')
 
 
 if __name__ == '__main__':
     blade = Blade()
-    u_inf, tsr, yaw = 10, 8, 0
-    solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=False)
+    u_inf, tsr, yaw = 10, 6, 15
+    solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=True)
     # solution = solver.solve(0.505, 0.005, 30, 20)
     # print(solution)
     rotor = Rotor(51, 5)
@@ -237,5 +239,5 @@ if __name__ == '__main__':
     # av = rotor.azimuth_average()
     # az0 = list(set(rotor.df.index.get_level_values('azimuth')))[0]
     # print(max(abs(av['a']-rotor.df['a'].xs(az0, level='azimuth'))))
-    rotor.to_csv('../results/tip-correction/no-prandtl')
+    rotor.to_csv('../results/yaw')#'../results/tip-correction/no-prandtl')
     # graph(blade, solver)
