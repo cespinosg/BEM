@@ -126,12 +126,12 @@ def graph(data6, data8, data10, tsr, yaw, n_az, path):#blade, solver):
     '''
     fig1 = plt.figure()#figsize=(12, 6))
     plt.title(r'Normal and tagential force, non-dimensioned by $\frac{1}{2} \rho U_\infty^2 R$')
-    plt.plot(mu6, fx6/(0.5*Uo**2*radius),  label=r'Faxial, tsr=6')
-    plt.plot(mu8, fx8/(0.5*Uo**2*radius),  label=r'Faxial, tsr=8')
-    plt.plot(mu10, fx10/(0.5*Uo**2*radius),  label=r'Faxial, tsr=10')
-    plt.plot(mu6, fy6/(0.5*Uo**2*radius),  label=r'Fazimuthal, tsr=6')
-    plt.plot(mu8, fy8/(0.5*Uo**2*radius),  label=r'Fazimuthal, tsr=8')
-    plt.plot(mu10, fy10/(0.5*Uo**2*radius),  label=r'Fazimuthal, tsr=10')
+    plt.plot(mu6, fx6/(dr6*3*0.5*Uo**2*radius),  label=r'Faxial, tsr=6')
+    plt.plot(mu8, fx8/(dr8*3*0.5*Uo**2*radius),  label=r'Faxial, tsr=8')
+    plt.plot(mu10, fx10/(dr10*3*0.5*Uo**2*radius),  label=r'Faxial, tsr=10')
+    plt.plot(mu6, fy6/(dr6*3*0.5*Uo**2*radius),  label=r'Fazimuthal, tsr=6')
+    plt.plot(mu8, fy8/(dr8*3*0.5*Uo**2*radius),  label=r'Fazimuthal, tsr=8')
+    plt.plot(mu10, fy10/(dr10*3*0.5*Uo**2*radius),  label=r'Fazimuthal, tsr=10')
     #plt.grid()
     plt.xlabel(r'$\mu$ [-]')
     plt.legend()
@@ -184,7 +184,7 @@ if __name__ == '__main__':
         file = f'../results/yaw/u_inf-{uinf}-tsr-{tsr}-yaw-{yaw}-n_r-{n_r}-n_az-{n_az}.csv'
     path = '../results/yaw/'
     #file = sys.argv[1]
-    print(file)
+    #print(file)
     data6 = pd.read_csv(file6)
     data8 = pd.read_csv(file8)
     data10 = pd.read_csv(file10)
