@@ -1,12 +1,12 @@
 \chapter{Blade Element Momentum theory}
 
-\section{Main assumptions of the BEM theory \textcolor{blue}{NIKLAS}}
+\section{Main assumptions of the BEM theory}
 \subsection{Assumptions}
-The Blade Element Method is a combination of blade element theory and momentum theory to calculate the induced velocity at the rotor. Blade element theory is used to break down the blade into smaller parts and determine the forces acting on the blade element as it makes a revolution. These forces are added up to determine the forces acting on the whole rotor. Momentum theory helps to calclulate the induced velocity at the rotor. The main assumption of BEM theory is that the force created by a blade element is solely responsible for the change of momentum of the air which passes through the annulus swept by th element [1]. This means that there is no radial interaction between the flows through different annuli, which can only be true if the axial flow induction does not vary radially [1]. This assumption is not correct but is acceptable [1].
+The Blade Element Method is a combination of blade element theory and momentum theory to calculate the induced velocity at the rotor. Blade element theory is used to break down the blade into smaller parts and determine the forces acting on the blade element as it makes a revolution. These forces are added up to determine the forces acting on the whole rotor. Momentum theory helps to calclulate the induced velocity at the rotor. The main assumption of BEM theory is that the force created by a blade element is solely responsible for the change of momentum of the air which passes through the annulus swept by the element [1]. This means that there is no radial interaction between the flows through different annuli, which can only be true if the axial flow induction does not vary radially [1]. This assumption is not correct but is acceptable [1].
 \subsection{Corrections}
 This assumption imposes some limitations on the model which are overcome through several corrections. Firstly, at high axial induction values, $a$, pure BEM theory predicts flow reversal in the wake. In reality the wake become turbulent and mixes with the free stream air. This mixing cannot be captured by BEM theory and so a correction is used. The correction used here is the Glauert correction for heavily loaded rotors further explainded in section 2.2. Another limitation of BEM is that is assumes a uniform loading over the rotor which is not true when the rotor has a finite number of blades. A finite numer of blades leads to a concentration of loading on the blades and each blade sheds vortices at the tip and root. These vortices cause an increase in axial induction at the edges of the blade which can be modeled with Prandtl's tip corrections which is further explored in section 3.3.
 
-\section{Code flow chart \textcolor{green}{CARLOS}}
+\section{Code flow chart}
 
 The code structure for solving the BEM equations in one cell at a given azimuth and radius is explained below.
 
