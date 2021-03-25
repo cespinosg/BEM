@@ -28,6 +28,40 @@ def graph(data6, data8, data10, tsr, yaw, n_az, path):#blade, solver):
     #    a[i], ap[i], fx[i], fy[i] = solver.solve(mu[i], dmu)
     #    print(i)
 
+
+    airfoil = 'polar-DU95W180.csv'
+    data1=pd.read_csv(airfoil, header=0,
+                        names = ["alpha", "cl", "cd", "cm"])
+    polar_alpha = data1['alpha'][:]
+    polar_cl = data1['cl'][:]
+    polar_cd = data1['cd'][:]
+    fig1 = plt.figure()
+    plt.plot(polar_alpha, polar_cl, label=r'$C_l$')
+    plt.xlabel(r'$\alpha$')
+    plt.ylabel(r'$C_l$')
+    plt.legend()
+    plt.title(rf'$C_l\ vs\ \alpha$')
+    plt.savefig(path+'Cl_v_alpha'+'.pdf')
+    plt.show()
+    #plt.close('all')
+    fig1 = plt.figure()
+    plt.plot(polar_alpha, polar_cd, label=r'$C_d$')
+    plt.xlabel(r'$\alpha$')
+    plt.ylabel(r'$C_d$')
+    plt.legend()
+    plt.title(rf'$C_d\ vs\ \alpha$')
+    plt.savefig(path+'Cd_v_alpha'+'.pdf')
+    plt.show()
+    fig1 = plt.figure()
+    plt.plot(polar_cd, polar_cl, label=r'$C_d$')
+    plt.xlabel(r'$C_d$')
+    plt.ylabel(r'$C_l$')
+    plt.legend()
+    plt.title(rf'$C_l\ vs\ C_d$')
+    plt.savefig(path+'Cd_v_Cl'+'.pdf')
+    plt.show()
+
+
     mu6 = data6['mu']
     dmu6 = data6['dmu']
     a6 = data6['a']
