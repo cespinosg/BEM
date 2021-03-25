@@ -6,4 +6,92 @@ Perujo
 
 \section{Code flow chart \textcolor{green}{CARLOS}}
 
-CS7.    Carlos Simao 7, ô magnifico
+The code structure for solving the BEM equations in one cell at a given azimuth and radius is explained below.
+
+\begin{enumerate}
+	
+	\item First guess for the flow induction factors: $ a_0 = 1/3 $ and $ a'_0 = 0 $.
+	
+	\item \label{iteration-start} Forces estimation.
+	
+	\begin{enumerate}
+		
+		\item The local velocities to the given azimuth and radius are calculated.
+		
+		\begin{enumerate}
+			
+			\item The yaw flow correction constant is estimated: $ \chi = (0.6 a + 1) \gamma $ and $ K = 2 \tan 1/2 \chi $.
+			
+			\item Axial velocity: $ u_a = \cos \gamma - a (1 + K \mu \sin \psi) $.
+			
+			\item Tangential velocity: $ u_t = \lambda \mu (1+a') - \sin \gamma \cos \psi $.
+			
+		\end{enumerate}
+		
+		\item Flow angle determination from the local velocities: $ \tan \phi = u_a/u_t $.
+		
+		\item Angle of attack is determined from the flow angle $ \phi $ and blade geometry: $ \alpha = \phi - \beta $.
+		
+		\item Aerodynamic coefficients $ c_l $ and $ c_d $ are obtained from airfoil polar curve.
+		
+		\item The forces are estimated using the Blade Element Theory.
+		
+		\begin{enumerate}
+			
+			\item Axial force: $ F_x = 1/2 (u_a^2+u_t^2) (c_l \cos \phi + c_d \sin \phi) c B \Delta \phi / 2 \pi $.
+			
+			\item Tangential force: $ F_t = 1/2 (u_a^2+u_t^2) (c_l \sin \phi - c_d \cos \phi) c B \Delta \psi / 2 \pi $.
+			
+		\end{enumerate}
+		
+	\end{enumerate}
+
+	\item Induction factors estimation.
+	
+	\begin{enumerate}
+		
+		\item Cell surface: $ dS = r \Delta r \Delta \psi $.
+		
+		\item Prandtl's loss factor: $ f(\mu) = 2/\pi \arccos \left[ \exp \left( - B/2 \left( (1-\mu)/\mu \right) \sqrt{1+(\lambda^2\mu^2)/((1-a)^2)} \right) \right] $.
+		
+		\item Axial induction factor.
+		
+		\begin{enumerate}
+			
+			\item Thrust coefficient: $ C_T = F_x/(1/2 u_{\infty}^2 \Delta S) $.
+			
+			\item Thrust coefficient limit for applying Glauert correction for heavily loaded rotors: $ C_{T_2} = 2 \sqrt{C_{T_1}} - C_{T_1} $, where $ C_{T_1} = 1.816 $.
+			
+			\item If $ C_T < C_{T_2} $, $ a = 1/2 - 1/2 \sqrt{1-C_T} $.
+			
+			\item If $ C_T \geq C_{T_2} $, $ a = 1 + (C_T-C_{T_1})/(4 \sqrt{C_{T_1}-4}) $.
+			
+		\end{enumerate}
+	
+		\item Tangential induction factor.
+		
+		\begin{enumerate}
+			
+			\item Tangential force coefficient: $ C_{F_t} = F_t/(1/2 u_{\infty}^2 \Delta S) $.
+			
+			\item Tangential induction factor: $ a' = C_{F_t} / (4a (1-a) \lambda \mu) $.
+			
+		\end{enumerate}
+	
+		\item Correct the flow induction factors with Prandtl's loss factor: $ a = a/f $ and $ a' = a'/f $.
+		
+	\end{enumerate}
+	
+	\item Convergence check.
+	
+	\begin{enumerate}
+		
+		\item Esimtate the error: $ e = max(|a-a_0|, |a'-a'_0|) $.
+		
+		\item If the error is larger than the tolerance, the process is repeated from step \ref{iteration-start} with $ a_0 = 0.75 a_0 + 0.25 a $ and $ a'_0 = 0.75 a'_0 + 0.25 a' $.
+		
+		\item If the error is smaller than the tolerance, the calculation has converged.
+		
+	\end{enumerate}
+	
+\end{enumerate}
