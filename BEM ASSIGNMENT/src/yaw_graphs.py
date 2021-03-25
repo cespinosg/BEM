@@ -41,7 +41,7 @@ def graph(data6, data8, data10, tsr, yaw, n_az, path):#blade, solver):
     plt.legend()
     plt.title(rf'$C_l\ vs\ \alpha$')
     plt.savefig(path+'Cl_v_alpha'+'.pdf')
-    plt.show()
+    #plt.show()
     #plt.close('all')
     fig1 = plt.figure()
     plt.plot(polar_alpha, polar_cd, label=r'$C_d$')
@@ -50,7 +50,7 @@ def graph(data6, data8, data10, tsr, yaw, n_az, path):#blade, solver):
     plt.legend()
     plt.title(rf'$C_d\ vs\ \alpha$')
     plt.savefig(path+'Cd_v_alpha'+'.pdf')
-    plt.show()
+    #plt.show()
     fig1 = plt.figure()
     plt.plot(polar_cd, polar_cl, label=r'$C_d$')
     plt.xlabel(r'$C_d$')
@@ -58,7 +58,7 @@ def graph(data6, data8, data10, tsr, yaw, n_az, path):#blade, solver):
     plt.legend()
     plt.title(rf'$C_l\ vs\ C_d$')
     plt.savefig(path+'Cd_v_Cl'+'.pdf')
-    plt.show()
+    #plt.show()
 
 
     mu6 = data6['mu']

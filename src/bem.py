@@ -167,18 +167,14 @@ class Rotor:
     Stores the BEM results over the rotor for the given conditions.
     '''
 
-    def __init__(self, n_r, n_az, uniform_spacing):
+    def __init__(self, n_r, n_az):
         '''
         Discretises the rotor with the given number of nodes.
         '''
         self.name = f'n_r-{n_r}-n_az-{n_az}'
         self.n_r = n_r
-        if uniform_spacing:
-	        self.mu_n = np.linspace(0.2, 1.0, n_r) # nodes uniform spaced
-	    else:
-	        aux = np.linspace(0, np.pi, n_r)
-	        self.mu_n = -0.4*np.cos(aux) + 0.6 # nodes cosine spaced
-	    self.mu_e = 0.5*(self.mu_n[1:]+self.mu_n[:-1])  # elements
+        self.mu_n = np.linspace(0.2, 1, n_r)  # nodes
+        self.mu_e = 0.5*(self.mu_n[1:]+self.mu_n[:-1])  # elements
         self.dmu = self.mu_n[1:]-self.mu_n[:-1]
         self.n_az = n_az
         self.psi_n = np.linspace(-180, 180, n_az)  # nodes
@@ -242,7 +238,7 @@ if __name__ == '__main__':
     solver = BEMSolver(blade, u_inf, tsr, yaw, prandtl=True)
     # solution = solver.solve(0.505, 0.005, 30, 20)
     # print(solution)
-    rotor = Rotor(51, 5, uniform_spacing=True)
+    rotor = Rotor(51, 5)
     rotor.solve(solver)
     # check the azimuth average
     # av = rotor.azimuth_average()
