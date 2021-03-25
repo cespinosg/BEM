@@ -2,9 +2,52 @@
 
 \section{Assignment BEM }
 
-This group assignment is based on the study of a Wind Turbine rotor's performanc. The methodology implemented is the Blade Element Moment theory. The BEM theory is a powerfull procedure to used to compute the main flow characteristics in a quick and cheap process if compared to other alternatives such as CFD. This is one of the main reasons why the BEM is a widely used tool to estimate the rotor performance in the Wind Energy business. \\
+This group assignment is the anbalysis of a Wind Turbine rotor's performance. The methodology implemented to estimate the performance is the Blade Element Moment theory. The BEM theory is a powerfull procedure used to compute quick and cheap the main flow characteristics. It is way simpler to implement and solve compared to other alternatives such as CFD. This is one of the main reasons why the BEM is a widely used tool to estimate the rotor performance in the Wind Energy business. \\
 
-This is an introduductory study and therefore has some simplifactions in the model.  
+This is an introduductory study and therefore uses a simplified wind turbine model. The rotor specifications are provided in Table \ref{Rot_specs} and the operation regimes are stated in Table \ref{Op_specs}.
+
+\begin{table}
+\centering
+\caption{Rotor design parameters}
+\begin{tabular}{|l|l|} 
+\hline
+\textbf{Rotor parameter}    & \textbf{Specification}                             \\ 
+\hline
+Radius                      & 50 m                                               \\ 
+\hline
+Number of blades            & 3                                                  \\ 
+\hline
+Blade start                 & 0.2 r/R                                            \\ 
+\hline
+Twist                       & 14*(1-r/R)~~~~ (for r/R0.2)                       \\ 
+\hline
+Blade pitch                 & -2 degrees                                         \\ 
+\hline
+Chord distribution function & (3*(1-r/R)+1) m~~~~ (for r/R\textgreater{}0.2)   \\ 
+\hline
+Airfoil                     & DU 95-W-180                                        \\
+\hline
+\end{tabular}
+\label{Rot_specs}
+\end{table}  
+
+\begin{table}
+\centering
+\caption{Operational regime specifications}
+\begin{tabular}{|l|l|} 
+\hline
+\textbf{Operational parameter} & \textbf{Specification}  \\ 
+\hline
+$U_{\infty}$                    & 10 m/s                  \\ 
+\hline
+TSR  ($\lambda$)                   & 3                       \\ 
+\hline
+Yaw angles                     & 0, 15 and 30 degrees    \\
+\hline
+\end{tabular}
+\label{Op_specs}
+\end{table}
+
 
 \section{Single polar innacuracies}
 
