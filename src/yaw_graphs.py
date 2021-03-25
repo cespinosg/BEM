@@ -18,7 +18,6 @@ def graph(data6, data8, data10, tsr, yaw, n_az, path):#blade, solver):
     omega6 = Uo*6/radius
     omega8 = Uo*8/radius
     omega10 = Uo*10/radius
-    rho = 1.225
     #dmu = 0.01
     #mu = np.arange(0.2+dmu/2, 1.0, dmu) #midpoints of annuli
     #print(len(mu))
@@ -102,25 +101,19 @@ def graph(data6, data8, data10, tsr, yaw, n_az, path):#blade, solver):
 
     dr6 = dmu6*radius#((mu+dmu/2) - (mu-dmu/2))*blade.radius
     CT6 = np.sum(fx6/(0.5*(Uo**2)*np.pi*radius**2))
-    CT6 = np.sum(fx6)*rho #Newtons
     CP6 = np.sum(fy6*mu6*radius*omega6/(0.5*(Uo**3)*np.pi*radius**2))
-    CP6 = np.sum(fy6*mu6*radius)*rho #newtons
     print("CT6 = ", CT6)
     print("CP6 = ", CP6)
 
     dr8 = dmu8*radius#((mu+dmu/2) - (mu-dmu/2))*blade.radius
     CT8 = np.sum(fx8/(0.5*(Uo**2)*np.pi*radius**2))
-    CT8 = np.sum(fx8)*rho #Newtons
     CP8 = np.sum(fy8*mu8*radius*omega8/(0.5*(Uo**3)*np.pi*radius**2))
-    CP8 = np.sum(fy8*mu8*radius)*rho #newtons
     print("CT8 = ", CT8)
     print("CP8 = ", CP8)
 
     dr10 = dmu10*radius#((mu+dmu/2) - (mu-dmu/2))*blade.radius
     CT10 = np.sum(fx10/(0.5*(Uo**2)*np.pi*radius**2))
-    CT10 = np.sum(fx10)*rho #Newtons
     CP10 = np.sum(fy10*mu10*radius*omega10/(0.5*(Uo**3)*np.pi*radius**2))
-    CP10 = np.sum(fy10*mu10*radius)*rho #newtons
     print("CT10 = ", CT10)
     print("CP10 = ", CP10)
 
